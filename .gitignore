@@ -1,0 +1,8 @@
+# match everything 
+
+*
+
+# exclude the init file and gitignore file
+
+!.gitignore
+!init.el
