@@ -38,9 +38,25 @@
 ;;(require 'org-bullets)
 ;;(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
+(add-hook 'org-mode-hook (lambda ()
+			   (visual-line-mode 1)
+			   (setq org-latex-pdf-process
+				 '("latex -shell-escape -interaction nonstopmode -output-directory %o %f"
+				   "bibtex $(basename %b)"
+				   "latex -shell-escape -interaction nonstopmode -output-directory %o %f"
+				   "dvips -o %b.ps %b.dvi"
+				   "ps2pdf %b.ps"))
+			   (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))
+			   (setq org-latex-with-hyperref nil)
+			   (setq org-list-allow-alphabetical t)
+			   ;; set auto-revert-mode for pdf view frame with M-x, so it will refresh as soon as the file on disk changes.
+			   ;; or set the below.
+			   (setq revert-without-query '(".+\\.pdf"))
+			   ))
+
 ;; indentation for visual-line mode in Org major mode.
 (setq org-startup-indented t)
-(setq visual-line-mode t)
+;;(setq visual-line-mode t)
 
 (setq inhibit-compacting-font-caches t)
 
@@ -50,6 +66,53 @@
 
 ;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 (load-theme 'darktooth t)
+
+;; spell check
+(setenv "DICPATH" "C:\\hunspell\\src\\tools\\.libs\\")
+(setenv "DICTIONARY" "en_US")
+;;(setenv "PATH" (concat (getenv "PATH") "C:\\hunspell\\src\\tools\\.libs\\"))
+(add-to-list 'exec-path "C:\\hunspell\\src\\tools\\.libs\\")
+
+(setq ispell-program-name "hunspell")
+;;(add-to-list 'exec-path (parse-colon-path (getenv "DICPATH")))
+
+(require 'flyspell)
+
+  (setq ispell-local-dictionary "en_US")
+  (setq ispell-local-dictionary-alist
+      '((nil "[[:alpha:]]" "[^[:alpha:]]" "[']" t ("-d" "en_US") nil utf-8)
+	    ("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" t ("-d" "en_US") nil utf-8)))
+  
+  (setq ispell-dictionary "en_US")
+  (setq ispell-hunspell-dict-paths-alist '(("en_US" "C:\\hunspell\\src\\tools\\.libs\\en_US.aff")))
+
+  (eval-after-load "ispell"
+  (progn
+    (setq ispell-dictionary "en_US")))  ;; doesnt seem to work.
+  
+  (setq flyspell-mode 1)
+
+
+(use-package flyspell-correct
+  :after flyspell
+  :config
+  (global-set-key (kbd "<apps>") 'flyspell-correct-wrapper)) ;; f7 is a common choice. I like apps like in windows.
+
+
+  (use-package flyspell-correct-popup
+   :init
+   (setq flyspell-correct-interface #'flyspell-correct-popup))
+  
+;; Helm mode
+(use-package helm)
+;;  :defer 1
+;;  :diminish)
+
+(global-set-key (kbd "M-x") #'helm-M-x)
+(global-set-key (kbd "C-x C-f") #'helm-find-files)
+
+;; helm config ends
+
 
 (org-babel-do-load-languages
        'org-babel-load-languages
@@ -146,7 +209,7 @@
  '(org-export-async-init-file "~/.emacs.d/orgasyncexportinit.el")
  '(org-export-in-background nil)
  '(package-selected-packages
-   '(jedi elpy zenburn-theme yasnippet-snippets use-package pdf-tools org-bullets jupyter dracula-theme darktooth-theme cyberpunk-theme)))
+   '(flyspell-correct-popup helm flyspell-correct jedi elpy zenburn-theme yasnippet-snippets use-package pdf-tools org-bullets jupyter dracula-theme darktooth-theme cyberpunk-theme)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

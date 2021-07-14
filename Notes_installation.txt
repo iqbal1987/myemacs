@@ -1,0 +1,57 @@
+Try installing minimal packages required to compile hunspell.
+and try the following. If not install all the devel packages in cygwin pkg manager. and convert files with dos2unix.
+
+
+Hunspell compilinging in cygwin: https://github.com/hunspell/hunspell
+- Add all developer dependencies whn installingcygwin.
+- use dos2unix to change terminal chars.
+- then follow the steps in hunspell compiling process
+
+find . -name \*.m4|xargs dos2unix
+find . -name \*.ac|xargs dos2unix
+find . -name \*.am|xargs dos2unix
+
+ref: https://stackoverflow.com/questions/47582762/ac-config-macro-dirsbuild-aux-m4-conflicts-with-aclocal-amflags-i-build-aux
+
+if everything goes well ./configure will create a make file.
+
+run make
+
+
+src/tools contains the executable. 
+src/tools/.libs also containts exe's. Emcas referes to /.libs/ and these exe s need extra dlls from cygwin. cyghunspell-1.7.0.dll
+
+But to execute this exe, cygwin1.dll is required. 
+Shared library cygstdc++-6.dll is also required.
+plus a few others. see .libs comment below. more dependencies are erequired. emacs looks at .lins somehow.
+
+Instead of placeing a path variable in environment (for safety)
+Copy the dll in tools directory. and refer to thei tools directory to emacs ispell-program-name parameter.
+
+
+
+---
+
+download disctionaries.
+
+http://hunspell.github.io/    (see dictionaries section: https://cgit.freedesktop.org/libreoffice/dictionaries/tree/)
+
+https://cgit.freedesktop.org/libreoffice/dictionaries/tree/en
+
+https://helpx.adobe.com/indesign/kb/add_cs_dictionaries.html
+------
+
+
+ispell-check-version shows the error hunspell inside tools/.libs was being used. even when the exec path was given as /tools/
+cyghunspell-1.7-0.dll is required. install with cygwill libhunspell1.7. and copy the dll from cygwin bin folder to hunspell.libs folder.
+
+
+
+----------------
+
+ispell.el copied from Emacs26.x 
+Now it works.
+but ispell-change-dictionary has to be evoked beore flyspell mode.
+
+
+
