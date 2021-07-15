@@ -110,8 +110,22 @@
 
 (global-set-key (kbd "M-x") #'helm-M-x)
 (global-set-key (kbd "C-x C-f") #'helm-find-files)
-
 ;; helm config ends
+
+;; pending-delete-mode 
+;; will delete the selected text on entering new data. Hook it to org mode or general text-mode.
+
+;; expand-region Ctrl+W in intellij
+(use-package expand-region
+  :bind ("C-=" . er/expand-region))
+
+;; Ace-window for switching between frames.
+;; (use-package ace-window) 
+;; Treemacs depends on ace-window so we dont need to initialize it separately. Treemacs was added for lsp mode.
+;; we can bind ace-window to M-o
+(global-set-key (kbd "M-o") 'ace-window) ;; beware this will override M-o in org-mode for creating bold italics and so on..
+;; by default aw-keys 0-9
+(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
 
 
 (org-babel-do-load-languages
@@ -209,7 +223,7 @@
  '(org-export-async-init-file "~/.emacs.d/orgasyncexportinit.el")
  '(org-export-in-background nil)
  '(package-selected-packages
-   '(flyspell-correct-popup helm flyspell-correct jedi elpy zenburn-theme yasnippet-snippets use-package pdf-tools org-bullets jupyter dracula-theme darktooth-theme cyberpunk-theme)))
+   '(expand-region flyspell-correct-popup helm flyspell-correct jedi elpy zenburn-theme yasnippet-snippets use-package pdf-tools org-bullets jupyter dracula-theme darktooth-theme cyberpunk-theme)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
