@@ -1,3 +1,5 @@
+Spell correction:
+
 Try installing minimal packages required to compile hunspell.
 and try the following. If not install all the devel packages in cygwin pkg manager. and convert files with dos2unix.
 
