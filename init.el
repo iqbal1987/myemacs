@@ -22,6 +22,24 @@
 ;; Enable transient mark mode. In emacs >23 it is already enabled
 ;;;;(transient-mark-mode 1)
 
+;; Dashboard 
+(use-package dashboard
+	:ensure t
+	:config
+	(dashboard-setup-startup-hook)
+	(setq dashboard-banner-logo-title "Hey what are you doing?")
+	(setq dashboard-startup-banner (concat user-emacs-directory "B01_edit.png"))
+	(setq dashboard-image-banner-max-height 480)
+	(setq dashboard-center-content t)
+	(setq dashboard-show-shortcuts nil)
+	(setq dashboard-set-navigator t)
+	)
+
+
+;; visual fill column minor mode. to make margin and fill text in a fixed width column
+(use-package visual-fill-column)
+;; this was intalled with packages-list-packages before use-package
+
 ;;;;Org mode configuration
 ;; Enable Org mode
 (require 'org)
@@ -52,6 +70,10 @@
 			   ;; set auto-revert-mode for pdf view frame with M-x, so it will refresh as soon as the file on disk changes.
 			   ;; or set the below.
 			   (setq revert-without-query '(".+\\.pdf"))
+			   (setq fill-column 80)
+			   (setq visual-fill-column-width 80)
+			   (visual-fill-column-mode 1)
+			   (setq visual-fill-column-center-text t)
 			   ))
 
 ;; indentation for visual-line mode in Org major mode.
@@ -60,12 +82,57 @@
 
 (setq inhibit-compacting-font-caches t)
 
+;; ORG ROAM SETTINGS
+
+;; this settting is to remove warning (migration from v1 to v2). has to be set before loading the package.
+(setq org-roam-v2-ack t)
+
+(use-package org-roam
+	:custom
+	(org-roam-directory "C:/DATA/UT/Research/Notes/org-roam-dir")
+	:config
+	(org-roam-setup)
+	:bind (("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n r" . org-roam-node-random)		    
+           (:map org-mode-map
+                 (("C-c n i" . org-roam-node-insert)
+                  ("C-c n o" . org-id-get-create)
+                  ("C-c n t" . org-roam-tag-add)
+                  ("C-c n a" . org-roam-alias-add)
+                  ("C-c n l" . org-roam-buffer-toggle))))
+)
+;; first three keybindings work from outside org-roam as well.
+;; the remaining ones are inside the org-mode.
+
+;; org-roam requires emacs sqlite: compile with cygwin. go to the elpha/emacssqlite folder and run make command to compile a sqlite exe file. Throws an error when applied in an empty databse: query timeout 30 s.
+;; selecting deleted buffer (error). Add the cygwin1.dll file to w/system32 folder. check if the emacsql-sqlite exe file works in cmd.
+;;(org-roam-db-autosync-mode)
+
+;; to search through the org documents in roam directory, use deft package.
+(use-package deft
+	:ensure t
+    :config
+    (setq deft-directory "C:/DATA/UT/Research/Notes/org-roam-dir"
+          deft-recursive t
+          deft-strip-summary-regexp ":PROPERTIES:\n\\(.+\n\\)+:END:\n"
+          deft-use-filename-as-title t)
+    :bind
+    ("C-c n d" . deft))
+
+
+
 (add-to-list 'load-path "~/path-to-yasnippet")
 (require 'yasnippet)
 (yas-global-mode 1)
 
 ;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 (load-theme 'darktooth t)
+
+;; mode-line config. otheroptions: smart-mode-line, spaceline,telephoneline,doom-line
+(require 'powerline)
+(powerline-default-theme)
+
 
 ;; spell check
 (setenv "DICPATH" "C:\\hunspell\\src\\tools\\.libs\\")
@@ -91,6 +158,9 @@
     (setq ispell-dictionary "en_US")))  ;; doesnt seem to work.
   
   (setq flyspell-mode 1)
+
+(setq ispell-change-dictionary "en_US")
+(global-set-key (kbd "<f5>") 'flyspell-mode)
 
 
 (use-package flyspell-correct
@@ -223,7 +293,7 @@
  '(org-export-async-init-file "~/.emacs.d/orgasyncexportinit.el")
  '(org-export-in-background nil)
  '(package-selected-packages
-   '(expand-region flyspell-correct-popup helm flyspell-correct jedi elpy zenburn-theme yasnippet-snippets use-package pdf-tools org-bullets jupyter dracula-theme darktooth-theme cyberpunk-theme)))
+   '(visual-fill-column org-roam markdown-preview-mode markdown-mode powerline expand-region flyspell-correct-popup helm flyspell-correct jedi elpy zenburn-theme yasnippet-snippets use-package pdf-tools org-bullets jupyter dracula-theme darktooth-theme cyberpunk-theme)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
