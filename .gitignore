@@ -1,6 +1,6 @@
-# match everything 
+# * match everything; /* matches even folders
 
-*
+/*
 
 # exclude the init file and gitignore file
 
@@ -8,3 +8,4 @@
 !init.el
 !Notes_installation.txt
 !orgasyncexportinit.el
+!snippets/
