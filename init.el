@@ -197,6 +197,11 @@
 ;; by default aw-keys 0-9
 (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
 
+;; ORG Babel based - PlantUML
+; for syntax highlighting/editing
+(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+
+;; ORG BABEL language Settings
 
 (org-babel-do-load-languages
        'org-babel-load-languages
@@ -204,7 +209,19 @@
          (emacs-lisp . t)
          (dot . t)
          (jupyter . t)
+		 (plantuml .t)
 	   ))
+
+;; Plant UML diagram - jar path to execute locally otherwise script will send it to default url
+
+(setq org-plantuml-jar-path (expand-file-name "C:\\plantuml\\plantuml-nodot_1_2023_1.jar"))
+
+; set environment variable in windows GRAPHVIZ_DOT (path to graph viz bin folder). sicne this jar does not have dot. or download a 
+; jar with minimal dot. check plantuml website.
+
+
+; update images in buffer after evaluation
+(add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 
 (use-package elpy
   :ensure t
@@ -293,7 +310,7 @@
  '(org-export-async-init-file "~/.emacs.d/orgasyncexportinit.el")
  '(org-export-in-background nil)
  '(package-selected-packages
-   '(visual-fill-column org-roam markdown-preview-mode markdown-mode powerline expand-region flyspell-correct-popup helm flyspell-correct jedi elpy zenburn-theme yasnippet-snippets use-package pdf-tools org-bullets jupyter dracula-theme darktooth-theme cyberpunk-theme)))
+   '(magit visual-fill-column org-roam markdown-preview-mode markdown-mode powerline expand-region flyspell-correct-popup helm flyspell-correct jedi elpy zenburn-theme yasnippet-snippets use-package pdf-tools org-bullets jupyter dracula-theme darktooth-theme cyberpunk-theme)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
