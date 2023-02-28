@@ -212,12 +212,21 @@
 		 (plantuml .t)
 	   ))
 
-;; Plant UML diagram - jar path to execute locally otherwise script will send it to default url
+;; ORG mode Plant UML diagram - jar path to execute locally otherwise script will send it to default url
 
 (setq org-plantuml-jar-path (expand-file-name "C:\\plantuml\\plantuml-nodot_1_2023_1.jar"))
 
 ; set environment variable in windows GRAPHVIZ_DOT (path to graph viz bin folder). sicne this jar does not have dot. or download a 
 ; jar with minimal dot. check plantuml website.
+
+;; PlantUML mode
+; This setting is for the plantuml-mode which can contact the server or use jar or bin file.
+(setq plantuml-default-exec-mode 'jar)
+
+;; Enable plantuml-mode for PlantUML files automatically
+(add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
+(setq plantuml-jar-path (expand-file-name "C:\\plantuml\\plantuml-nodot_1_2023_1.jar"))
+
 
 
 ; update images in buffer after evaluation
@@ -310,7 +319,7 @@
  '(org-export-async-init-file "~/.emacs.d/orgasyncexportinit.el")
  '(org-export-in-background nil)
  '(package-selected-packages
-   '(magit visual-fill-column org-roam markdown-preview-mode markdown-mode powerline expand-region flyspell-correct-popup helm flyspell-correct jedi elpy zenburn-theme yasnippet-snippets use-package pdf-tools org-bullets jupyter dracula-theme darktooth-theme cyberpunk-theme)))
+   '(plantuml-mode magit visual-fill-column org-roam markdown-preview-mode markdown-mode powerline expand-region flyspell-correct-popup helm flyspell-correct jedi elpy zenburn-theme yasnippet-snippets use-package pdf-tools org-bullets jupyter dracula-theme darktooth-theme cyberpunk-theme)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
