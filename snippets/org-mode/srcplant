@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: srcplant
+# key: <srcplant
+# --
+#+begin_src plantuml :export results :file images/${1:image01}.png
+$0
+#+end_src

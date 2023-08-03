@@ -22,25 +22,44 @@
 ;; Enable transient mark mode. In emacs >23 it is already enabled
 ;;;;(transient-mark-mode 1)
 
+;; ICONS package; install from package-list 
+; execute the install fonts program to download the fonts:  M-x all-the-icons-install-fonts; Install the fonts manually (for windows; rightclick install).
+; and uncomment/use the following lines; 
+
+(when (display-graphic-p)
+ (require 'all-the-icons))
+
 ;; Dashboard 
 (use-package dashboard
 	:ensure t
 	:config
 	(dashboard-setup-startup-hook)
-	(setq dashboard-banner-logo-title "Hey what are you doing?")
+	(setq dashboard-banner-logo-title "Hey, what are you doing?")
 	(setq dashboard-startup-banner (concat user-emacs-directory "B01_edit.png"))
 	(setq dashboard-image-banner-max-height 480)
 	(setq dashboard-center-content t)
-	(setq dashboard-show-shortcuts nil)
+	(setq dashboard-show-shortcuts t)
 	(setq dashboard-set-navigator t)
 	)
 
+;;(setq dashboard-match-agenda-entry "TODO=\"TODO\"-HOME") Example to match TODO keyword and deselect all HOME keywords.
+;; check org mode manual Matching-tags-and-properties for more search criteria syntax
+
+(setq dashboard-match-agenda-entry "-HOME") ; current setting is to deselect HOME tag from all todos.
+
+(setq dashboard-navigator-buttons
+        `(;; Github
+           ((,(all-the-icons-octicon "mark-github" :height 1.1 :v-adjust 0.0)
+            "Github"
+            "Go to iqbal1987"
+            (lambda (&rest _) (browse-url "https://github.com/iqbal1987")))
+)))
 
 ;; visual fill column minor mode. to make margin and fill text in a fixed width column
 (use-package visual-fill-column)
 ;; this was intalled with packages-list-packages before use-package
 
-;;;;Org mode configuration
+;;;;  Org mode configuration
 ;; Enable Org mode
 (require 'org)
 
@@ -76,11 +95,56 @@
 			   (setq visual-fill-column-center-text t)
 			   ))
 
+;; NOTE: for org preview latex to work as intended change temporary file directory variable in emacs to a local directory instead of in roaming appdata in windows. creating problem with finding the path to place temporary tex files.
+
+;; add custom config style file (own package) which lists common newcommands (shortened for math writing). sty file is in emacs.d folder. Used for org preview latex function.
+; This file should be installed as a local texmf dist in miktex. C:\emacspkgs\localtexmf\tex\latex\*.sty Add the root: localtexmf in the roots list in textmf directories in miktex.
+
+(add-to-list 'org-latex-packages-alist '("" "my-org-preview-config" t))
+
 ;; indentation for visual-line mode in Org major mode.
 (setq org-startup-indented t)
 ;;(setq visual-line-mode t)
 
 (setq inhibit-compacting-font-caches t)
+
+(global-set-key (kbd "C-c a") #'org-agenda)
+
+(setq org-todo-keywords '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(D!)" "CANCELLED(C@)" "DEFERRED(F)")))
+
+; font faces for the todo keywords
+;(setf org-todo-keyword-faces '(("INPROGRESS" . (:foreground "yellow" :background "red" :bold t :weight bold))
+;			       ("TODO" . (:foreground "cyan" :background "steelblue" :bold t :weight bold))
+;			       ("WAITING" . (:foreground "yellow" :background "magenta2" :bold t :weight bold))
+;			       ("DONE" . (:foreground "gray50" :background "gray30"))))
+
+;; Org Capture
+(global-set-key (kbd "C-c c") #'org-capture)
+(setq org-default-notes-file "C:/DATA/UT/Research/Notes/defaultNotes.org")
+
+;(add-to-list 'org-capture-templates
+;             '("w" "Work-related Task"  entry
+;               (file "~/work.org")
+;               "* TODO %?" :empty-lines 1))
+
+
+(setq org-capture-templates
+ '(
+    ("t" "Todo" entry (file "C:/DATA/UT/Research/Notes/tasks.org")
+             "* TODO %?%^G\n  :PROPERTIES:\n  :ENTERED_ON: %T\n  :END:\n%i\n")
+	("d" "Todo w/ Deadline" entry (file "C:/DATA/UT/Research/Notes/tasks.org")
+             "* TODO %?%^G\n  DEADLINE:%T\n :PROPERTIES:\n  :ENTERED_ON: %T\n  :END:\n%i\n")
+	("n" "Notes" entry (file "C:/DATA/UT/Research/Notes/defaultNotes.org")
+             "* %?%^G\n  :PROPERTIES:\n  :ENTERED_ON: %T\n  :END:\n%i\n" :empty-lines 1)
+	("i" "Ideas" entry (file "C:/DATA/UT/Research/Notes/ideas.org")
+             "* %?%^G\n  :PROPERTIES:\n  :ENTERED_ON: %T\n  :END:\n%i\n" :empty-lines 1)
+	("l" "Learn" entry (file "C:/DATA/UT/Research/Notes/learn.org")
+             "* %?%^G\n  :PROPERTIES:\n  :ENTERED_ON: %T\n  :END:\n%i\n" :empty-lines 1)
+
+  )
+)
+
+;; refile and archive.
 
 ;; ORG ROAM SETTINGS
 
@@ -120,7 +184,28 @@
     :bind
     ("C-c n d" . deft))
 
+;; ORG Agenda settings
+(setq org-agenda-files '("C:/DATA/UT/Research/Notes/"))
 
+; Ignore files tagged with  EXCLUDE_TODO as a filetag in generating TODO list in agenda-mode
+(setq org-agenda-custom-commands
+   '(("c" "Custom agenda, ignore HOME tag" agenda ""
+      ((org-agenda-tag-filter-preset '("-HOME"))
+	  )
+	  )
+	)
+   )
+   ;; works
+;;(setq org-agenda-custom-commands
+;;      '(("c" "custom command" agenda "";; (1) (3) (4)
+	 ;; ...other commands here
+	;;((todo ""))
+;;	((org-agenda-tag-filter-preset '("-HOME"))))
+;;))   
+   
+   
+
+;; YASnippet 
 
 (add-to-list 'load-path "~/path-to-yasnippet")
 (require 'yasnippet)
@@ -318,8 +403,35 @@
  ;; If there is more than one, they won't work right.
  '(org-export-async-init-file "~/.emacs.d/orgasyncexportinit.el")
  '(org-export-in-background nil)
+ '(org-preview-latex-default-process 'dvipng)
+ '(org-preview-latex-process-alist
+   '((dvipng :programs
+	     ("latex" "dvipng")
+	     :description "dvi > png" :message "you need to install the programs: latex and dvipng." :image-input-type "dvi" :image-output-type "png" :image-size-adjust
+	     (1.0 . 1.0)
+	     :latex-compiler
+	     ("latex -shell-escape -c-style-errors -interaction nonstopmode -output-directory %o %f")
+	     :image-converter
+	     ("dvipng -D %D -T tight -o %O %f"))
+     (dvisvgm :programs
+	      ("latex" "dvisvgm")
+	      :description "dvi > svg" :message "you need to install the programs: latex and dvisvgm." :image-input-type "dvi" :image-output-type "svg" :image-size-adjust
+	      (1.7 . 1.5)
+	      :latex-compiler
+	      ("latex -interaction nonstopmode -output-directory %o %f")
+	      :image-converter
+	      ("dvisvgm %f -n -b min -c %S -o %O"))
+     (imagemagick :programs
+		  ("latex" "convert")
+		  :description "pdf > png" :message "you need to install the programs: latex and imagemagick." :image-input-type "pdf" :image-output-type "png" :image-size-adjust
+		  (1.0 . 1.0)
+		  :latex-compiler
+		  ("pdflatex -interaction nonstopmode -output-directory %o %f")
+		  :image-converter
+		  ("convert -density %D -trim -antialias %f -quality 100 %O"))))
  '(package-selected-packages
-   '(plantuml-mode magit visual-fill-column org-roam markdown-preview-mode markdown-mode powerline expand-region flyspell-correct-popup helm flyspell-correct jedi elpy zenburn-theme yasnippet-snippets use-package pdf-tools org-bullets jupyter dracula-theme darktooth-theme cyberpunk-theme)))
+   '(org-fragtog plantuml-mode magit visual-fill-column org-roam markdown-preview-mode markdown-mode powerline expand-region flyspell-correct-popup helm flyspell-correct jedi elpy zenburn-theme yasnippet-snippets use-package pdf-tools org-bullets jupyter dracula-theme darktooth-theme cyberpunk-theme))
+ '(temporary-file-directory "c:/emacstmpdir"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
