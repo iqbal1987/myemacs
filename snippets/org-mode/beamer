@@ -1,0 +1,28 @@
+# -*- mode: snippet -*-
+# name: beamer
+# key: <beamer
+# --
+#+startup: beamer
+#+Latex_class: beamer
+#+beamer_theme: Pittsburgh
+#+beamer_color_theme: seahorse
+#+options: h:2 num:t toc:t
+#+COLUMNS: %40ITEM %10BEAMER_env(Env) %9BEAMER_envargs(Env Args) %4BEAMER_col(Col) %10BEAMER_extra(Extra)
+#+latex_header: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Topic}\tableofcontents[currentsection]\end{frame}}
+
+#+title:$1
+#+Author:$2
+#+email:$3
+#+date:$0
+
+#+BEAMER_HEADER: \subtitle{Document subtitle}
+#+BEAMER_HEADER: \institute[INST]{Chair of Applied Mechanics and Data Analysis\\\url{http://www.utwente.nl}}
+#+BEAMER_HEADER: \titlegraphic{\includegraphics[width=1.5cm]{./myfig}}
+
+* Setup :noexport:
+  - Restart beamer mode to set the export commands to pdflatex. Enables using pdf and png images.
+#+begin_src emacs-lisp
+  (org-beamer-mode 0)  
+  (org-beamer-mode 1)
+;; C-c C-c
+#+end_src

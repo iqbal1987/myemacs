@@ -76,6 +76,7 @@
 ;;(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 (add-hook 'org-mode-hook (lambda ()
+			   (message "Org hook start")
 			   (visual-line-mode 1)
 			   (setq org-latex-pdf-process
 				 '("latex -shell-escape -interaction nonstopmode -output-directory %o %f"
@@ -93,7 +94,31 @@
 			   (setq visual-fill-column-width 80)
 			   (visual-fill-column-mode 1)
 			   (setq visual-fill-column-center-text t)
+			   (message "Org hook end")
 			   ))
+
+;; Org beamer hook 
+;; Change the org-latex-pdf-process variable. This helps to compile beamer docs containing images in pdf and png formats. When not in beamer mode rever back to latex-dvips-pdf route for compiling mom questions.
+(add-hook 'org-beamer-mode-hook (lambda()
+				(message "beamer hook start")
+				(if (bound-and-true-p org-beamer-mode)
+					(progn 
+						(message "beamer-mode is on")
+						(setq org-latex-pdf-process
+						'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+						"bibtex $(basename %b)"
+						"pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+						)))
+				(progn (message "beamer-mode is off")
+				(setq org-latex-pdf-process
+				'("latex -shell-escape -interaction nonstopmode -output-directory %o %f"
+				"bibtex $(basename %b)"
+				"latex -shell-escape -interaction nonstopmode -output-directory %o %f"
+				"dvips -o %b.ps %b.dvi"
+				"ps2pdf %b.ps")))
+				)
+				(message "beamer hook end")
+))
 
 ;; NOTE: for org preview latex to work as intended change temporary file directory variable in emacs to a local directory instead of in roaming appdata in windows. creating problem with finding the path to place temporary tex files.
 
@@ -403,6 +428,9 @@
  ;; If there is more than one, they won't work right.
  '(org-export-async-init-file "~/.emacs.d/orgasyncexportinit.el")
  '(org-export-in-background nil)
+ '(org-latex-packages-alist nil)
+ '(org-latex-pdf-process
+   '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "bibtex $(basename %b)" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
  '(org-preview-latex-default-process 'dvipng)
  '(org-preview-latex-process-alist
    '((dvipng :programs
